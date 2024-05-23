@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genel Kültür Quiz Uygulaması</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Montserrat, sans-serif;
+            color: #333;
+            background: #FFFFFF;
+        }
+
+        .frame1 {
+            background-color: #FBCD2A;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content {
+            display: flex;
+            align-items: center;
+            width: 80%;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-weight: 800;
+            color: #FF6B00;
+            font-size: 23px;
+        }
+
+        nav {
+            display: flex;
+        }
+
+        nav a {
+            color: #FFFFFF;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 600;
+        }
+
+        nav a.active, .signup {
+            color: #FF6B00;
+        }
+
+        .search-box {
+            padding: 10px 20px;
+            border-radius: 16px;
+            border: none;
+            background: #FFE58C;
+            color: #FFFCF4;
+        }
+
+        .hero {
+            background-image: url('header-image.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #FFFFFF;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .categories {
+            background-image: url('/public/Görseller/DALL·E\ 2024-04-30\ 15.57.15\ -\ A\ digital\ illustration\ of\ a\ young\ female\ student\ positioned\ on\ the\ right\ side\ of\ the\ image\,\ holding\ a\ yellow\ paper\ 2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-color: #B8B8B8;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .category {
+            margin-top: 20px;
+            color: #000000;
+            text-align: center;
+        }
+
+        .icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .icon.art {
+            background-image: url('Görseller/Frame\ 28.png');
+        }
+
+        .icon.sports {
+            background-image: url('Görseller/Vector.png');
+        }
+
+        .icon.history {
+            background-image: url('Görseller/Frame\ 29.png');
+        }
+
+        footer {
+            background-color: #B8B8B8;
+            color: #FFFFFF;
+            padding: 20px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #FF6B00;
+            color: #FFFFFF;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        /* Responsive tasarım */
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-top: 10px;
+            }
+            .search-box {
+                width: 100%;
+                margin-top: 10px;
+            }
+            .categories {
+                padding: 20px 10px;
+            }
+            .category {
+                margin-top: 10px;
+                font-size: 16px;
+            }
+            .hero {
+                padding: 40px 10px;
+            }
+            .icon {
+                margin-bottom: 10px;
+            }
+            footer {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 18px;
+            }
+            nav a {
+                margin: 5px 0;
+            }
+            .search-box {
+                font-size: 14px;
+            }
+            .hero {
+                padding: 30px 5px;
+                font-size: 14px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            .category {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="frame1">
+        <div class="content">
+            <div class="logo">Quiz</div>
+            <nav>
+                <a href="index.html" class="active">Anasayfa</a>
+                <a href="kategoriler.html">Kategoriler</a>
+                <a href="quizlerim.html">Quizlerim</a>
+                <a href="forum.html">Forum</a>
+            </nav>
+            <input type="text" placeholder="Quiz Ara" class="search-box">
+            <nav>
+                <a href="profilim.html" class="login">Profilim</a>
+                <a href="index.html" class="signup">Çıkış</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="hero">
+        <h1>Öğrenirken eğlenmek için doğru yerdesiniz!</h1>
+        <p>Kendinize uygun quiz'i seçin ve bilgi yolculuğunuza başlayın!</p>
+        <button onclick="location.href='kategoriler.html'">Quizleri Görmek İçin Tıklayın</button>
+    </div>
+
+    <div class="categories">
+        <div class="category">
+            <div class="icon art"></div>
+            <p>Sanat tarihinden ünlü eserlere kadar ne kadar iyi bildiğinizi ölçün ve sanatsal bilginizi genişletin.</p>
+        </div>
+        <div class="category">
+            <div class="icon sports"></div>
+            <p>Futboldan basketbola, geniş spor yelpazemizle spor bilginizi test edin.</p>
+        </div>
+        <div class="category">
+            <div class="icon history"></div>
+            <p>Geçmişin tozlu sayfalarını aralayın ve tarih bilginizi ne kadar iyi olduğunu keşfedin.</p>
+        </div>
+        <button onclick="location.href='kategoriler.html'">Kategorileri Keşfet</button>
+    </div>
+
+    <footer>
+        Tüm hakları saklıdır © 2024
+    </footer>
+</body>
+</html>

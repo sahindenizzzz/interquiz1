@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizlerim</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Montserrat, sans-serif;
+            background: #f0f0f0;
+            color: #333;
+        }
+        .container {
+            padding: 20px;
+        }
+        .quiz-result {
+            background: #fff;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .quiz-result h3 {
+            margin: 0 0 10px 0;
+        }
+        .quiz-result p {
+            margin: 0 0 10px 0;
+        }
+        .quiz-result button {
+            background: #FF6B00;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button {
+            background: #FF6B00;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-button" onclick="goToHomePage()">Ana Sayfaya Geri Dön</button>
+        <h1>Çözdüğünüz Quizler</h1>
+        <div id="quizResults"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/public/oturum-ac.html';  // Giriş sayfasına yönlendirme
+                return;
+            }
+
+            fetch('http://localhost:5000/users/quizResults', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.message); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                const quizResultsDiv = document.getElementById('quizResults');
+                data.quizResults.forEach((result, index) => {
+                    const quizResultDiv = document.createElement('div');
+                    quizResultDiv.className = 'quiz-result';
+                    quizResultDiv.innerHTML = `
+                        <h3>Çözdüğünüz ${index + 1}. Quiz</h3>
+                        <p>Skor: ${result.score}</p>
+                        <p>Doğru Sayısı: ${result.correctAnswers}</p>
+                        <p>Yanlış Sayısı: ${result.wrongAnswers}</p>
+                        <p>Tarih: ${new Date(result.date).toLocaleString()}</p>
+                    `;
+                    quizResultsDiv.appendChild(quizResultDiv);
+                });
+            })
+            .catch(error => {
+                console.error('Quiz sonuçları alma hatası:', error);
+            });
+        });
+
+        function goToHomePage() {
+            window.location.href = 'index-giris-sonrasi.html';
+        }
+    </script>
+</body>
+</html>

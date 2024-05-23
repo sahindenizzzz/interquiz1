@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şifre Sıfırlama</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Montserrat, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-container button {
+            background: #FF6B00;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Şifre Sıfırlama</h2>
+        <form id="resetPasswordForm">
+            <label for="password">Yeni Şifre</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Şifreyi Sıfırla</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('resetPasswordForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = {
+                password: formData.get('password'),
+                token: new URLSearchParams(window.location.search).get('token')
+            };
+            fetch('http://localhost:5000/users/reset-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Şifreniz başarıyla sıfırlandı.');
+                    window.location.href = 'oturum-ac.html';
+                } else {
+                    alert('Bir hata oluştu, lütfen tekrar deneyin.');
+                }
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+            });
+        });
+    </script>
+</body>
+</html>

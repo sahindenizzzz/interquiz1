@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Soru Sayfası</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            height: 100%;
+            width: 100%;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(26deg, white 0%, #D7D7BC 100%);
+        }
+        .question {
+            width: 100%;
+            text-align: center;
+            font-size: 40px;
+            font-weight: 800;
+            color: black;
+            margin-top: 20px; /* Üstten boşluk */
+            padding: 0 20px; /* Kenarlardan boşluk */
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            color: black;
+            margin-top: 10px;
+        }
+        .radio-button {
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            background-color: #D9D9D9;
+            border-radius: 50%;
+            vertical-align: middle;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .radio-button:checked {
+            background-color: #FF6B00;
+            border: 2px solid #FFFFFF;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .button {
+            width: 240px;
+            height: 50px;
+            background: #FF9C54;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Responsive tasarım */
+        @media (max-width: 768px) {
+            .question {
+                font-size: 32px;
+            }
+            .option {
+                font-size: 20px;
+            }
+            .radio-button {
+                width: 25px;
+                height: 25px;
+            }
+            .button {
+                width: 200px;
+                height: 45px;
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .question {
+                font-size: 28px;
+            }
+            .option {
+                font-size: 18px;
+            }
+            .radio-button {
+                width: 20px;
+                height: 20px;
+            }
+            .button {
+                width: 180px;
+                height: 40px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="questionForm">
+            <div class="question"></div>
+            <div class="options"></div>
+            <div class="button-container">
+                <button type="button" class="button" onclick="submitAnswer()">Devam</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+
+<script>
+let currentQuestionIndex = 0;
+let questions = [];
+let correctAnswers = 0;
+let wrongAnswers = [];
+let userAnswers = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+    const category = params.get('category');
+    const difficulty = params.get('difficulty');
+
+    fetch(`http://localhost:5000/questions?category=${category}&difficulty=${difficulty}`)
+        .then(response => response.json())
+        .then(data => {
+            questions = data;
+            displayQuestion(currentQuestionIndex);
+        })
+        .catch(error => console.error('Error loading the questions:', error));
+});
+
+function displayQuestion(index) {
+    const questionData = questions[index];
+    const questionContainer = document.querySelector('.question');
+    const optionsContainer = document.querySelector('.options');
+
+    questionContainer.innerText = questionData.questionText;
+    optionsContainer.innerHTML = '';
+
+    questionData.answerOptions.forEach((option, idx) => {
+        const optionContainer = document.createElement('div');
+        optionContainer.className = 'option';
+
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = 'question';
+        input.className = 'radio-button';
+        input.value = idx;
+
+        const label = document.createElement('label');
+        label.appendChild(input);
+        label.append(option.answerText);
+
+        optionContainer.appendChild(label);
+        optionsContainer.appendChild(optionContainer);
+    });
+}
+
+function submitAnswer() {
+    const selectedOption = document.querySelector('input[name="question"]:checked');
+    if (selectedOption) {
+        const selectedIndex = parseInt(selectedOption.value);
+        const correct = questions[currentQuestionIndex].answerOptions[selectedIndex].isCorrect;
+
+        userAnswers.push({
+            question: questions[currentQuestionIndex].questionText,
+            selectedAnswer: questions[currentQuestionIndex].answerOptions[selectedIndex].answerText,
+            correctAnswer: questions[currentQuestionIndex].answerOptions.find(opt => opt.isCorrect).answerText,
+            isCorrect: correct
+        });
+
+        if (correct) {
+            correctAnswers++;
+        } else {
+            wrongAnswers.push(userAnswers[userAnswers.length - 1]);
+        }
+
+        if (currentQuestionIndex < questions.length - 1) {
+            currentQuestionIndex++;
+            displayQuestion(currentQuestionIndex);
+        } else {
+            const totalScore = correctAnswers * 10; // Her doğru cevap 10 puan
+            sessionStorage.setItem('score', totalScore);
+            sessionStorage.setItem('wrongAnswers', JSON.stringify(wrongAnswers));
+            window.location.href = 'sonuc-sayfasi.html';
+        }
+    } else {
+        alert('Lütfen bir seçenek seçin!');
+    }
+}
+</script>

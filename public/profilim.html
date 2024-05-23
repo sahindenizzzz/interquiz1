@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil Sayfası</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #FFFFFF;
+        }
+        .Frame1 {
+            width: 100%;
+            height: 80px;
+            position: relative;
+            background: #FBCD2A;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        .left-nav, .right-nav {
+            display: flex;
+            align-items: center;
+        }
+        .nav-item {
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .Quiz, .Kategoriler {
+            color: #FF6B00;
+        }
+        .log-out {
+            width: 79px;
+            height: 40px;
+            background: #FF6B00;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .Frame59 {
+            width: 80%;
+            margin: 50px auto 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 45px;
+        }
+        .profile-section {
+            border: 1px solid #FCCE2A;
+            border-radius: 11px;
+            padding: 20px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .profile-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .edit {
+            color: #FCCE2A;
+            cursor: pointer;
+            font-size: 22px;
+            font-weight: 500;
+        }
+        .feedback-button {
+            background: #FF6B00;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .statistics {
+            margin-top: 20px;
+        }
+        .statistics h3 {
+            color: #FF6B00;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        .statistics ul {
+            list-style: none;
+            padding: 0;
+        }
+        .statistics ul li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="Frame1">
+        <div class="left-nav">
+            <div class="nav-item Quiz" onclick="window.location.href='index-giris-sonrasi.html'">Anasayfa</div>
+            <div class="nav-item Kategoriler" onclick="window.location.href='kategoriler.html'">Kategoriler</div>
+            <div class="nav-item" onclick="window.location.href='quizlerim.html'">Quizlerim</div>
+        </div>
+        <div class="right-nav">
+            <div class="nav-item" onclick="window.location.href='profilim.html'">Profilim</div>
+            <div class="log-out" onclick="logout()">Çıkış</div>
+        </div>
+    </div>
+
+    <div class="Frame59">
+        <div class="Profilim" style="color: #FF6B00; font-size: 40px; font-weight: 800;">Profilim</div>
+        <div class="profile-section">
+            <div class="profile-info">
+                <div>Kullanıcı Adı: <span id="username"></span></div>
+                <input type="text" id="edit-username" placeholder="Yeni Kullanıcı Adı" style="display:none;">
+            </div>
+            <div class="profile-info">
+                <div>Şifre: ******</div>
+                <input type="password" id="edit-password" placeholder="Yeni Şifre" style="display:none;">
+            </div>
+            <div class="profile-info">
+                <button onclick="enableEdit()">Düzenle</button>
+                <button onclick="updateProfile()" style="display:none;" id="save-button">Kaydet</button>
+            </div>
+            <div class="profile-info">
+                <div>Email: <span id="email"></span></div>
+            </div>
+            <div class="profile-info">
+                <div>Puan: <span id="points"></span></div>
+                <div>Seviye: <span id="level"></span></div>
+            </div>
+            <button class="feedback-button" onclick="window.location.href='geri-bildirim.html'">Geri Bildirim Yap</button>
+        </div>
+
+        <div class="statistics profile-section">
+            <h3>Kullanıcı İstatistikleri</h3>
+            <ul>
+                <li>Toplam Çözülen Quiz: <span id="totalQuizzes"></span></li>
+                <li>Toplam Doğru Cevap: <span id="totalCorrect"></span></li>
+                <li>Toplam Yanlış Cevap: <span id="totalWrong"></span></li>
+                <li>Ortalama Skor: <span id="averageScore"></span></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/public/oturum-ac.html';
+            } else {
+                fetch('http://localhost:5000/users/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('username').textContent = data.username;
+                    document.getElementById('email').textContent = data.email;
+                    document.getElementById('points').textContent = data.points;
+                    document.getElementById('level').textContent = data.level;
+                    // Kullanıcı istatistiklerini göster
+                    const totalQuizzes = data.quizResults.length;
+                    const totalCorrect = data.quizResults.reduce((acc, quiz) => acc + quiz.correctAnswers, 0);
+                    const totalWrong = data.quizResults.reduce((acc, quiz) => acc + quiz.wrongAnswers, 0);
+                    const averageScore = (data.quizResults.reduce((acc, quiz) => acc + quiz.score, 0) / totalQuizzes).toFixed(2);
+
+                    document.getElementById('totalQuizzes').textContent = totalQuizzes;
+                    document.getElementById('totalCorrect').textContent = totalCorrect;
+                    document.getElementById('totalWrong').textContent = totalWrong;
+                    document.getElementById('averageScore').textContent = averageScore;
+                })
+                .catch(error => {
+                    console.error('Profil bilgileri alınamadı:', error);
+                });
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        }
+
+        function enableEdit() {
+            document.getElementById('edit-username').style.display = 'block';
+            document.getElementById('edit-password').style.display = 'block';
+            document.getElementById('save-button').style.display = 'block';
+        }
+
+        function updateProfile() {
+            const newUsername = document.getElementById('edit-username').value;
+            const newPassword = document.getElementById('edit-password').value;
+
+            const token = localStorage.getItem('token');
+            fetch('http://localhost:5000/users/updateProfile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ username: newUsername, password: newPassword })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.user) {
+                    document.getElementById('username').textContent = data.user.username;
+                    document.getElementById('edit-username').style.display = 'none';
+                    document.getElementById('edit-password').style.display = 'none';
+                    document.getElementById('save-button').style.display = 'none';
+                    alert('Profil başarıyla güncellendi.');
+                } else {
+                    throw new Error('Profil güncellenemedi.');
+                }
+            })
+            .catch(error => {
+                console.error('Profil güncellenemedi:', error);
+            });
+        }
+    </script>
+</body>
+</html>

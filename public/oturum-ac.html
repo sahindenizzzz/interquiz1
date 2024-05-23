@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genel Kültür Quiz Uygulaması</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Montserrat, sans-serif;
+            color: #333;
+            background: #FFFFFF;
+            background: url('/public/Görseller/DALL·E 2024-04-30 15.57.15 - A digital illustration of a young female student positioned on the right side of the image, holding a yellow paper 2.jpg') center center/cover;
+        }
+
+        .frame1 {
+            background-color: #FBCD2A;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .left-nav {
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        .right-nav {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .logo {
+            font-weight: 800;
+            color: #FF6B00;
+            font-size: 23px;
+            margin-right: 20px;
+        }
+
+        nav a {
+            color: #FFFFFF;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 600;
+        }
+
+        nav a.active, .signup {
+            color: #FF6B00;
+        }
+
+        .Frame70 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            border: 1px solid #010100;
+            padding: 80px;
+            border-radius: 11px;
+            width: 300px;
+            background-color: white;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            background-color: #FF6B00;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .forgot-password a {
+            color: #FF6B00;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive tasarım */
+        @media (max-width: 768px) {
+            .frame1 {
+                flex-direction: column;
+                padding: 10px;
+            }
+            .left-nav, .right-nav {
+                margin: 0;
+            }
+            nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            .form-container {
+                width: 90%;
+                padding: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 18px;
+                margin-right: 10px;
+            }
+            nav a {
+                margin: 5px 0;
+                font-size: 14px;
+            }
+            .form-container {
+                padding: 20px;
+            }
+            input[type="text"], input[type="password"] {
+                width: 100%;
+            }
+            button {
+                font-size: 14px;
+                padding: 10px;
+            }
+            .forgot-password {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="frame1">
+        <div class="left-nav">
+            <div class="logo">Quiz</div>
+            <nav>
+                <a href="index.html" class="active">Anasayfa</a>
+                <a href="oturum-ac.html">Kategoriler</a>
+            </nav>
+        </div>
+        <div class="right-nav">
+            <nav>
+                <a href="oturum-ac.html" class="login">Oturum Aç</a>
+                <a href="uyelik-olustur.html" class="signup">Üye Ol</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="Frame70">
+        <form id="loginForm">
+            <div class="form-container">
+                <label for="username">Kullanıcı Adı / Mail</label>
+                <input type="text" id="username" name="username">
+                <label for="password">Şifre</label>
+                <input type="password" id="password" name="password">
+                <button type="submit">Oturum Aç</button>
+                <div class="forgot-password">
+                    <a href="sifre-sifirlama-talebi.html">Şifremi Unuttum</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('http://localhost:5000/users/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username: username, password: password })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Giriş başarısız. Durum Kodu: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                localStorage.setItem('token', data.token);
+                window.location.href = '/public/kategoriler.html';  // Kategoriler sayfasına yönlendirme
+            })
+            .catch(error => {
+                console.error('Giriş sırasında bir hata oluştu:', error);
+            });
+        });
+    </script>
+</body>
+</html>

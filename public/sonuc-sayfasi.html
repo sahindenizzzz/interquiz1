@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Sonuç Sayfası</title>
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Montserrat', sans-serif;
+        background-color: #FFFFFF;
+        overflow-y: auto; /* Ekran dışına taşmayı önler ve dikey kaydırma çubuğunu etkinleştirir */
+    }
+    .container {
+        width: 100vw;
+        min-height: 100vh; /* İçeriğin uzunluğuna göre sayfa boyutu ayarlanır */
+        position: relative;
+        background: linear-gradient(176deg, white 0%, #D7D7BC 100%);
+        background-size: cover; /* Arka planı ekranı kaplayacak şekilde ayarlar */
+        padding-bottom: 20px; /* Alt kısımda biraz boşluk bırakır */
+    }
+    .title {
+        position: relative;
+        top: 100px;
+        font-size: 40px;
+        font-weight: 800;
+        color: black;
+        text-align: center;
+        padding: 0 20px;
+    }
+    .score-container {
+        position: relative;
+        top: 120px;
+        font-size: 30px;
+        font-weight: 800;
+        color: black;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    .details {
+        position: relative;
+        top: 140px;
+        font-size: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        align-items: center;
+    }
+    .details div {
+        color: black;
+        max-width: 80%; /* Metin genişliğini sınırlar */
+        text-align: center; /* Metni ortalar */
+    }
+    .correct {
+        color: #66CC00;
+    }
+    .wrong {
+        color: #EF5F4C;
+    }
+    .navigation {
+        position: relative;
+        top: 160px;
+        color: #FF6B00;
+        font-size: 20px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .back-icon {
+        width: 30px;
+        height: 30px;
+        background: url('ikonunuzun_yolu/geri_dön_ikonu.png'); /* İkonunuzun yolu */
+        background-size: cover;
+        margin-right: 10px;
+    }
+    .share-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-left: 20px;
+    }
+    .share-button {
+        background-color: #3b5998; /* Facebook için mavi renk */
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .share-button.twitter {
+        background-color: #1da1f2; /* Twitter için mavi renk */
+    }
+
+    /* Responsive tasarım */
+    @media (max-width: 768px) {
+        .title {
+            font-size: 30px;
+            top: 60px;
+        }
+        .score-container {
+            font-size: 24px;
+            top: 80px;
+        }
+        .details {
+            font-size: 20px;
+            top: 100px;
+        }
+        .navigation {
+            font-size: 18px;
+            top: 120px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .title {
+            font-size: 24px;
+            top: 40px;
+        }
+        .score-container {
+            font-size: 20px;
+            top: 60px;
+        }
+        .details {
+            font-size: 18px;
+            top: 80px;
+        }
+        .navigation {
+            font-size: 16px;
+            top: 100px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="title">Tebrikler! Quizi Tamamladınız.</div>
+    <div class="score-container">
+        <div class="score">Skorunuz: 50</div>
+        <div class="share-buttons">
+            <button class="share-button facebook" onclick="shareOnFacebook()">Facebook'ta Paylaş</button>
+            <button class="share-button twitter" onclick="shareOnTwitter()">Twitter'da Paylaş</button>
+        </div>
+    </div>
+    <div class="details">
+        <div>Doğru Sayınız: <span class="correct">5</span></div>
+        <div>Yanlış Sayınız: <span class="wrong">5</span></div>
+        
+    </div>
+    <div class="navigation" onclick="goToHomePage()">
+        <div class="back-icon"></div>
+        Anasayfaya Dön
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const score = sessionStorage.getItem('score');
+    const wrongAnswers = JSON.parse(sessionStorage.getItem('wrongAnswers'));
+    const userAnswers = JSON.parse(sessionStorage.getItem('userAnswers'));
+    const category = new URLSearchParams(window.location.search).get('category');
+    const difficulty = new URLSearchParams(window.location.search).get('difficulty');
+    const token = localStorage.getItem('token');
+
+    document.querySelector('.score').textContent = `Skorunuz: ${score}`;
+    document.querySelector('.correct').textContent = `${10 - wrongAnswers.length}`;
+    document.querySelector('.wrong').textContent = `${wrongAnswers.length}`;
+
+    const detailsDiv = document.querySelector('.details');
+    wrongAnswers.forEach(answer => {
+        const div = document.createElement('div');
+        div.textContent = `Soru: ${answer.question}, Seçtiğiniz: ${answer.selectedAnswer}, Doğru Cevap: ${answer.correctAnswer}`;
+        detailsDiv.appendChild(div);
+    });
+
+    const quizResult = {
+        category: category,
+        difficulty: difficulty,
+        score: score,
+        correctAnswers: 10 - wrongAnswers.length,
+        wrongAnswers: wrongAnswers.length,
+        questions: userAnswers // soruları da dahil edin
+    };
+
+    console.log('Kaydedilecek Quiz Sonucu:', quizResult);
+
+    fetch('http://localhost:5000/users/saveQuizResult', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(quizResult)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Sonuç kaydedilemedi.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Sonuç kaydedildi:', data.message);
+    })
+    .catch(error => {
+        console.error('Sonuç kaydetme hatası:', error);
+    });
+});
+
+function shareOnFacebook() {
+    const score = sessionStorage.getItem('score');
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=Quiz sonucum: ${score} puan!`;
+    window.open(url, '_blank');
+}
+
+function shareOnTwitter() {
+    const score = sessionStorage.getItem('score');
+    const text = `Quiz sonucum: ${score} puan! ${window.location.href}`;
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+}
+
+function goToHomePage() {
+    window.location.href = 'index-giris-sonrasi.html';
+}
+</script>
+</body>
+</html>

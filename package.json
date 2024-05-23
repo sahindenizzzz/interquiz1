@@ -1,0 +1,24 @@
+{
+  "name": "yenigenelkulturquiz",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest"
+  },
+  
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.19.2",
+    "express-fileupload": "^1.5.0",
+    "mongoose": "^8.2.3",
+    "nodemailer": "^6.9.13"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

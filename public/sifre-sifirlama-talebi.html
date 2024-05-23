@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şifre Sıfırlama Talebi</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Montserrat, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-container button {
+            background: #FF6B00;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button {
+            background: #CCCCCC;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Şifre Sıfırlama Talebi</h2>
+        <form id="resetRequestForm">
+            <label for="email">E-posta</label>
+            <input type="email" id="email" name="email" required>
+            <button type="submit">Gönder</button>
+        </form>
+        <button class="back-button" onclick="goBack()">Geri Dön</button>
+    </div>
+    <script>
+        document.getElementById('resetRequestForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = {
+                email: formData.get('email')
+            };
+            fetch('http://localhost:5000/users/reset-password-request', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Şifre sıfırlama linki e-posta adresinize gönderildi.');
+                    event.target.reset();
+                } else {
+                    alert('Bir hata oluştu, lütfen tekrar deneyin.');
+                }
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+            });
+        });
+
+        function goBack() {
+            window.location.href = 'oturum-ac.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: #f0f0f0;
+            color: #333;
+        }
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        .post {
+            background: #fff;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .post h3 {
+            margin: 0 0 10px 0;
+        }
+        .post p {
+            margin: 0 0 10px 0;
+        }
+        .post button {
+            background: #FF6B00;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .comment-form {
+            display: none;
+            margin-top: 10px;
+        }
+        .comment-form textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        .comment-form button {
+            background: #FF6B00;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button {
+            background: #FF6B00;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive tasarım */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .post {
+                padding: 10px;
+            }
+            .post h3 {
+                font-size: 18px;
+            }
+            .post p {
+                font-size: 14px;
+            }
+            .comment-form textarea {
+                font-size: 14px;
+            }
+            .form-input, .form-textarea {
+                font-size: 14px;
+            }
+            .comment-form button, .post button, .back-button {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 5px;
+            }
+            .post {
+                padding: 5px;
+            }
+            .post h3 {
+                font-size: 16px;
+            }
+            .post p {
+                font-size: 12px;
+            }
+            .comment-form textarea {
+                font-size: 12px;
+            }
+            .form-input, .form-textarea {
+                font-size: 12px;
+            }
+            .comment-form button, .post button, .back-button {
+                font-size: 12px;
+                padding: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-button" onclick="goToHomePage()">Ana Sayfaya Geri Dön</button>
+        <h1>Forum</h1>
+        <div id="forumPosts"></div>
+        <h2>Yeni Konu Oluştur</h2>
+        <form id="createPostForm">
+            <input type="text" id="postTitle" class="form-input" placeholder="Başlık" required>
+            <textarea id="postContent" class="form-textarea" placeholder="İçerik" required></textarea>
+            <button type="submit">Oluştur</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/public/oturum-ac.html';  // Giriş sayfasına yönlendirme
+                return;
+            }
+
+            fetch('http://localhost:5000/forum/all')
+            .then(response => response.json())
+            .then(data => {
+                const forumPostsDiv = document.getElementById('forumPosts');
+                data.forEach(post => {
+                    const postDiv = document.createElement('div');
+                    postDiv.className = 'post';
+                    postDiv.innerHTML = `
+                        <h3>${post.title}</h3>
+                        <p>${post.content}</p>
+                        <p><strong>Gönderen:</strong> ${post.username}</p>
+                        <p><strong>Tarih:</strong> ${new Date(post.date).toLocaleString()}</p>
+                        <button onclick="toggleCommentForm('${post._id}')">Yorum Yap</button>
+                        <div class="comment-form" id="comment-form-${post._id}">
+                            <textarea placeholder="Yorum" id="comment-${post._id}" required></textarea>
+                            <button onclick="submitComment('${post._id}')">Gönder</button>
+                        </div>
+                        <div class="comments">
+                            <h4>Yorumlar:</h4>
+                            ${post.comments.map(comment => `
+                                <div class="comment">
+                                    <p>${comment.comment}</p>
+                                    <p><strong>Gönderen:</strong> ${comment.username}</p>
+                                    <p><strong>Tarih:</strong> ${new Date(comment.date).toLocaleString()}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    forumPostsDiv.appendChild(postDiv);
+                });
+            });
+
+            document.getElementById('createPostForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const title = document.getElementById('postTitle').value;
+                const content = document.getElementById('postContent').value;
+
+                fetch('http://localhost:5000/forum/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title, content })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    location.reload();
+                })
+                .catch(error => console.error('Hata:', error));
+            });
+        });
+
+        function toggleCommentForm(postId) {
+            const form = document.getElementById(`comment-form-${postId}`);
+            if (form) {
+                form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+
+        function submitComment(postId) {
+            const token = localStorage.getItem('token');
+            const comment = document.getElementById(`comment-${postId}`).value;
+
+            fetch(`http://localhost:5000/forum/comment/${postId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ comment })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                location.reload();
+            })
+            .catch(error => console.error('Hata:', error));
+        }
+
+        function goToHomePage() {
+            window.location.href = 'index-giris-sonrasi.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geri Bildirim Formu</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Montserrat, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .feedback-form {
+            background: white;
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 600px; /* Genişliği artırdık */
+        }
+        .feedback-form h2 {
+            margin-bottom: 40px;
+        }
+        .feedback-form label {
+            display: block;
+            margin-bottom: 15px;
+        }
+        .feedback-form input, .feedback-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .feedback-form .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .feedback-form button {
+            background: #FF6B00;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .feedback-form .back-button {
+            background: #ccc;
+            color: black;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="feedback-form">
+        <h2>Geri Bildirim Formu</h2>
+        <form id="feedbackForm">
+            <label for="username">Kullanıcı Adı</label>
+            <input type="text" id="username" name="username" required>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+            <label for="feedback">Geri Bildirim</label>
+            <textarea id="feedback" name="feedback" rows="5" required></textarea>
+            <div class="button-container">
+                <button type="button" class="back-button" onclick="window.location.href='profilim.html'">Geri Dön</button>
+                <button type="submit">Gönder</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = {
+                username: formData.get('username'),
+                email: formData.get('email'),
+                feedback: formData.get('feedback')
+            };
+            fetch('http://localhost:5000/feedback/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Geri bildiriminiz için teşekkür ederiz!');
+                    event.target.reset();
+                } else {
+                    alert('Bir hata oluştu, lütfen tekrar deneyin.');
+                }
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+            });
+        });
+    </script>
+</body>
+</html>

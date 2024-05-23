@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genel Kültür Quiz Uygulaması</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Montserrat, sans-serif;
+            color: #333;
+            background: #FFFFFF;
+            background: url('/public/Görseller/DALL·E 2024-04-30 15.57.15 - A digital illustration of a young female student positioned on the right side of the image, holding a yellow paper 2.jpg') center center/cover;
+        }
+
+        .frame1 {
+            background-color: #FBCD2A;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%; /* Genişliği tam yap */
+        }
+
+        .left-nav {
+            display: flex;
+            align-items: center;
+            margin-left: 20px; /* Soldan boşluk */
+        }
+
+        .right-nav {
+            display: flex;
+            align-items: center;
+            margin-right: 20px; /* Sağdan boşluk */
+        }
+
+        .logo {
+            font-weight: 800;
+            color: #FF6B00;
+            font-size: 23px;
+            margin-right: 20px; /* Logonun sağında boşluk */
+        }
+
+        nav a {
+            color: #FFFFFF;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 600;
+        }
+
+        nav a.active, .signup {
+            color: #FF6B00;
+        }
+
+        .Frame70 {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end; /* Formu sağa yaslamak için */
+            height: 100vh;
+            padding-right: 600px; /* Formu biraz sola kaydırmak için */
+        }
+
+        .form-container {
+            border: 1px solid #010100;
+            padding: 20px;
+            width: 50%;
+            background-color: white;
+            border-radius: 11px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: black;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 90%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            background-color: #FF6B00;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Responsive tasarım */
+        @media (max-width: 768px) {
+            .frame1 {
+                flex-direction: column;
+                padding: 10px;
+            }
+            .left-nav, .right-nav {
+                margin: 0;
+            }
+            nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            .form-container {
+                width: 90%;
+                padding: 20px;
+            }
+            .Frame70 {
+                justify-content: center; /* Küçük ekranlarda formu ortalar */
+                padding-right: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 18px;
+                margin-right: 10px;
+            }
+            nav a {
+                margin: 5px 0;
+                font-size: 14px;
+            }
+            .form-container {
+                padding: 10px;
+            }
+            .form-group label {
+                font-size: 18px;
+            }
+            .form-group input {
+                width: 100%;
+            }
+            button {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="frame1">
+        <div class="left-nav">
+            <div class="logo">Quiz</div>
+            <nav>
+                <a href="index.html" class="active">Anasayfa</a>
+                <a href="oturum-ac.html">Kategoriler</a>
+            </nav>
+        </div>
+        <div class="right-nav">
+            <nav>
+                <a href="oturum-ac.html" class="login">Oturum Aç</a>
+                <a href="uyelik-olustur.html" class="signup">Üye Ol</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="Frame70">
+        <form id="registrationForm" class="form-container">
+            <div class="form-group">
+                <label for="username">Kullanıcı Adı</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Şifre</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <button type="submit">Üyelik Oluştur</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            event.preventDefault();  // Formun varsayılan gönderme işlemini engelle
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const email = document.getElementById('email').value;
+
+            // Fetch API kullanarak POST isteği gönderme
+            fetch('http://localhost:5000/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                    email: email
+                }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();  // Burada JSON yanıtını dönüştür
+                } else {
+                    throw new Error('Kayıt başarısız');
+                }
+            })
+            .then(data => {
+                console.log('Kayıt başarılı:', data.message);
+                window.location.href = '/public/oturum-ac.html';  
+            })
+            .catch((error) => {
+                console.error('Kayıt sırasında bir hata oluştu:', error.message);
+            });
+        });
+    </script>
+</body>
+</html>

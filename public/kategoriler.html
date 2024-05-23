@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genel Kültür Quiz Uygulaması</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: #f0f0f0;
+            color: #333;
+            background-image: url('/public/Görseller/image\ 1.jpg');
+        }
+
+        .header {
+            background-color: #FBCD2A;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .left-nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .right-nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .header .logo {
+            font-weight: 800;
+            color: #FF6B00;
+            font-size: 23px;
+            margin-right: 20px;
+        }
+
+        nav a {
+            color: #FFFFFF;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 600;
+        }
+
+        nav a.active {
+            color: #FF6B00;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 20px;
+            padding: 40px 0;
+            justify-items: center;
+        }
+
+        .category {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        .category h2 {
+            color: #FF6B00;
+        }
+
+        .quiz {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .quiz img {
+            width: 100%;
+            height: auto;
+            max-width: 150px; /* Resmi yarıya küçültür */
+            max-height: 150px; /* Resmi yarıya küçültür */
+        }
+
+        .more {
+            background-color: #FF6B00;
+            color: #FFFFFF;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #FFFFFF;
+            text-align: center;
+            padding: 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .search-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+        }
+
+        .search-box {
+            padding: 10px;
+            width: 300px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .search-button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #FF6B00;
+            color: white;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        /* Renkler */
+        .category#sanat, .category#edebiyat {
+            background-color: #ffcccc; /* Sanat ve Edebiyat için pembe arka plan */
+        }
+
+        .category#spor, .category#yabanci_dil {
+            background-color: #ccf2ff; /* Spor ve Yabancı Dil için mavi arka plan */
+        }
+
+        .category#tarih, .category#din_kulturu {
+            background-color: #ffe6cc; /* Tarih ve Din Kültürü için turuncu arka plan */
+        }
+
+        .hidden-quiz {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="left-nav">
+            <a href="index.html" class="logo">Quiz</a>
+            <nav>
+                <a href="index-giris-sonrasi.html">Anasayfa</a>
+                <a href="kategoriler.html" class="active">Kategoriler</a>
+                <a href="quizlerim.html">Quizlerim</a>
+                <a href="forum.html">Forum</a>
+            </nav>
+        </div>
+        <div class="search-container">
+            <input type="text" id="search-input" class="search-box" placeholder="Zorluk Derecesine Göre Quiz Ara...">
+            <button onclick="searchQuizzes()" class="search-button">Ara</button>
+        </div>
+        <div class="right-nav">
+            <nav>
+                <a href="profilim.html">Profilim</a>
+                <a href="index.html">Çıkış Yap</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="categories" id="categories">
+        <!-- Dinamik kategori listesi -->
+        <div class="category" id="sanat">
+            <h2>Sanat</h2>
+            <!-- Quiz 1 -->
+            <a href="soru-sayfasi.html?category=Sanat&difficulty=kolay" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/görsel1.jpg" alt="Sanat Quiz 1">
+                <div class="info">Quiz 1 (Kolay)</div>
+                </div>
+            </a>   
+            <!-- Quiz 2 -->
+            <a href="soru-sayfasi.html?category=Sanat&difficulty=orta" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/Vicent-Van-Gogh-Starry-Night-Famous-Oil-Paintings-www.shairart 1.jpg" alt="Sanat Quiz 2">
+                <div class="info">Quiz 2 (Orta)</div>
+                </div>
+            </a>
+            <!-- Quiz 3 -->
+            <a href="soru-sayfasi.html?category=Sanat&difficulty=zor" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/Painter-with-landscape-painting 1.jpg" alt="Sanat Quiz 3">
+                <div class="info">Quiz 3 (Zor)</div>
+                </div>
+            </a>
+            <!-- Gizli Quizler -->
+            <div class="hidden-quiz">
+                <!-- Quiz 4 -->
+                <a href="soru-sayfasi.html?category=Sanat&difficulty=kolay2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/görsel1.jpg" alt="Sanat Quiz 4">
+                    <div class="info">Quiz 4 (Kolay2)</div>
+                    </div>
+                </a>
+                <!-- Quiz 5 -->
+                <a href="soru-sayfasi.html?category=Sanat&difficulty=orta2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/Vicent-Van-Gogh-Starry-Night-Famous-Oil-Paintings-www.shairart 1.jpg" alt="Sanat Quiz 5">
+                    <div class="info">Quiz 5 (Orta2)</div>
+                    </div>
+                </a>
+                <!-- Quiz 6 -->
+                <a href="soru-sayfasi.html?category=Sanat&difficulty=zor2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/Painter-with-landscape-painting 1.jpg" alt="Sanat Quiz 6">
+                    <div class="info">Quiz 6 (Zor2)</div>
+                    </div>
+                </a>
+            </div>
+            <button class="more" onclick="showMoreQuizzes('sanat')">Daha Fazla Gör</button>
+        </div>
+
+        <!-- Diğer Kategoriler -->
+        <!-- Aynı formatta diğer kategorileri ekleyin -->
+        <!-- Spor -->
+        <div class="category" id="spor">
+            <h2>Spor</h2>
+            <!-- Quiz 1 -->
+            <a href="soru-sayfasi.html?category=Spor&difficulty=kolay" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/440751056_18455489707053359_4608843270159245657_n 1.jpg" alt="Spor Quiz 1">
+                <div class="info">Quiz 1 (Kolay)</div>
+                </div>
+            </a>
+            <!-- Quiz 2 -->
+            <a href="soru-sayfasi.html?category=Spor&difficulty=orta" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/Roger-Federer-2012 1.jpg" alt="Spor Quiz 2">
+                <div class="info">Quiz 2 (Orta)</div>
+                </div>
+            </a>
+            <!-- Quiz 3 -->
+            <a href="soru-sayfasi.html?category=Spor&difficulty=zor" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/görsel3.jpg" alt="Spor Quiz 3">
+                <div class="info">Quiz 3 (Zor)</div>
+                </div>
+            </a>
+            <!-- Gizli Quizler -->
+            <div class="hidden-quiz">
+                <!-- Quiz 4 -->
+                <a href="soru-sayfasi.html?category=Spor&difficulty=kolay2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/440751056_18455489707053359_4608843270159245657_n 1.jpg" alt="Spor Quiz 4">
+                    <div class="info">Quiz 4 (Kolay2)</div>
+                    </div>
+                </a>
+                <!-- Quiz 5 -->
+                <a href="soru-sayfasi.html?category=Spor&difficulty=orta2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/Roger-Federer-2012 1.jpg" alt="Spor Quiz 5">
+                    <div class="info">Quiz 5 (Orta2)</div>
+                    </div>
+                </a>
+                <!-- Quiz 6 -->
+                <a href="soru-sayfasi.html?category=Spor&difficulty=zor2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/görsel3.jpg" alt="Spor Quiz 6">
+                    <div class="info">Quiz 6 (Zor2)</div>
+                    </div>
+                </a>
+            </div>
+            <button class="more" onclick="showMoreQuizzes('spor')">Daha Fazla Gör</button>
+        </div>
+
+        <!-- Tarih -->
+        <div class="category" id="tarih">
+            <h2>Tarih</h2>
+            <!-- Quiz 1 -->
+            <a href="soru-sayfasi.html?category=Tarih&difficulty=kolay" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/bu-yu-k-iskender-1695658545 1.jpg" alt="Tarih Quiz 1">
+                <div class="info">Quiz 1 (Kolay)</div>
+                </div>
+            </a>
+            <!-- Quiz 2 -->
+            <a href="soru-sayfasi.html?category=Tarih&difficulty=orta" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/görsel2.jpg" alt="Tarih Quiz 2">
+                <div class="info">Quiz 2 (Orta)</div>
+                </div>
+            </a>
+            <!-- Quiz 3 -->
+            <a href="soru-sayfasi.html?category=Tarih&difficulty=zor" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/stthomas-history-time 1.jpg" alt="Tarih Quiz 3">
+                <div class="info">Quiz 3 (Zor)</div>
+                </div>
+            </a>
+            <!-- Gizli Quizler -->
+            <div class="hidden-quiz">
+                <!-- Quiz 4 -->
+                <a href="soru-sayfasi.html?category=Tarih&difficulty=kolay2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/bu-yu-k-iskender-1695658545 1.jpg" alt="Tarih Quiz 4">
+                    <div class="info">Quiz 4 (Kolay2)</div>
+                    </div>
+                </a>
+                <!-- Quiz 5 -->
+                <a href="soru-sayfasi.html?category=Tarih&difficulty=orta2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/görsel2.jpg" alt="Tarih Quiz 5">
+                    <div class="info">Quiz 5 (Orta2)</div>
+                    </div>
+                </a>
+                <!-- Quiz 6 -->
+                <a href="soru-sayfasi.html?category=Tarih&difficulty=zor2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/stthomas-history-time 1.jpg" alt="Tarih Quiz 6">
+                    <div class="info">Quiz 6 (Zor2)</div>
+                    </div>
+                </a>
+            </div>
+            <button class="more" onclick="showMoreQuizzes('tarih')">Daha Fazla Gör</button>
+        </div>
+
+        <!-- Edebiyat -->
+        <div class="category" id="edebiyat">
+            <h2>Edebiyat</h2>
+            <!-- Quiz 1 -->
+            <a href="soru-sayfasi.html?category=Edebiyat&difficulty=kolay" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/görsel1.jpg" alt="Edebiyat Quiz 1">
+                <div class="info">Quiz 1 (Kolay)</div>
+                </div>
+            </a>
+            <!-- Quiz 2 -->
+            <a href="soru-sayfasi.html?category=Edebiyat&difficulty=orta" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/görsel1.jpg" alt="Edebiyat Quiz 2">
+                <div class="info">Quiz 2 (Orta)</div>
+                </div>
+            </a>
+            <!-- Quiz 3 -->
+            <a href="soru-sayfasi.html?category=Edebiyat&difficulty=zor" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/görsel1.jpg" alt="Edebiyat Quiz 3">
+                <div class="info">Quiz 3 (Zor)</div>
+                </div>
+            </a>
+            <!-- Gizli Quizler -->
+            <div class="hidden-quiz">
+                <!-- Quiz 4 -->
+                <a href="soru-sayfasi.html?category=Edebiyat&difficulty=kolay2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/görsel1.jpg" alt="Edebiyat Quiz 4">
+                    <div class="info">Quiz 4 (Kolay2)</div>
+                    </div>
+                </a>
+                <!-- Quiz 5 -->
+                <a href="soru-sayfasi.html?category=Edebiyat&difficulty=orta2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/görsel1.jpg" alt="Edebiyat Quiz 5">
+                    <div class="info">Quiz 5 (Orta2)</div>
+                    </div>
+                </a>
+                <!-- Quiz 6 -->
+                <a href="soru-sayfasi.html?category=Edebiyat&difficulty=zor2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/görsel1.jpg" alt="Edebiyat Quiz 6">
+                    <div class="info">Quiz 6 (Zor2)</div>
+                    </div>
+                </a>
+            </div>
+            <button class="more" onclick="showMoreQuizzes('edebiyat')">Daha Fazla Gör</button>
+        </div>
+
+        <!-- Yabancı Dil -->
+        <div class="category" id="yabanci_dil">
+            <h2>Yabancı Dil</h2>
+            <!-- Quiz 1 -->
+            <a href="soru-sayfasi.html?category=Yabancı Dil&difficulty=kolay" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/görsel1.jpg" alt="Yabancı Dil Quiz 1">
+                <div class="info">Quiz 1 (Kolay)</div>
+                </div>
+            </a>
+            <!-- Quiz 2 -->
+            <a href="soru-sayfasi.html?category=Yabancı Dil&difficulty=orta" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/görsel1.jpg" alt="Yabancı Dil Quiz 2">
+                <div class="info">Quiz 2 (Orta)</div>
+                </div>
+            </a>
+            <!-- Quiz 3 -->
+            <a href="soru-sayfasi.html?category=Yabancı Dil&difficulty=zor" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/görsel1.jpg" alt="Yabancı Dil Quiz 3">
+                <div class="info">Quiz 3 (Zor)</div>
+                </div>
+            </a>
+            <!-- Gizli Quizler -->
+            <div class="hidden-quiz">
+                <!-- Quiz 4 -->
+                <a href="soru-sayfasi.html?category=Yabancı Dil&difficulty=kolay2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/görsel1.jpg" alt="Yabancı Dil Quiz 4">
+                    <div class="info">Quiz 4 (Kolay2)</div>
+                    </div>
+                </a>
+                <!-- Quiz 5 -->
+                <a href="soru-sayfasi.html?category=Yabancı Dil&difficulty=orta2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/görsel1.jpg" alt="Yabancı Dil Quiz 5">
+                    <div class="info">Quiz 5 (Orta2)</div>
+                    </div>
+                </a>
+                <!-- Quiz 6 -->
+                <a href="soru-sayfasi.html?category=Yabancı Dil&difficulty=zor2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/görsel1.jpg" alt="Yabancı Dil Quiz 6">
+                    <div class="info">Quiz 6 (Zor2)</div>
+                    </div>
+                </a>
+            </div>
+            <button class="more" onclick="showMoreQuizzes('yabanci_dil')">Daha Fazla Gör</button>
+        </div>
+
+        <!-- Din Kültürü -->
+        <div class="category" id="din_kulturu">
+            <h2>Din Kültürü</h2>
+            <!-- Quiz 1 -->
+            <a href="soru-sayfasi.html?category=Din Kültürü&difficulty=kolay" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/görsel1.jpg" alt="Din Kültürü Quiz 1">
+                <div class="info">Quiz 1 (Kolay)</div>
+                </div>
+            </a>
+            <!-- Quiz 2 -->
+            <a href="soru-sayfasi.html?category=Din Kültürü&difficulty=orta" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/görsel1.jpg" alt="Din Kültürü Quiz 2">
+                <div class="info">Quiz 2 (Orta)</div>
+                </div>
+            </a>
+            <!-- Quiz 3 -->
+            <a href="soru-sayfasi.html?category=Din Kültürü&difficulty=zor" class="quiz-link">
+                <div class="quiz">
+                <img src="Görseller/görsel1.jpg" alt="Din Kültürü Quiz 3">
+                <div class="info">Quiz 3 (Zor)</div>
+                </div>
+            </a>
+            <!-- Gizli Quizler -->
+            <div class="hidden-quiz">
+                <!-- Quiz 4 -->
+                <a href="soru-sayfasi.html?category=Din Kültürü&difficulty=kolay2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/görsel1.jpg" alt="Din Kültürü Quiz 4">
+                    <div class="info">Quiz 4 (Kolay2)</div>
+                    </div>
+                </a>
+                <!-- Quiz 5 -->
+                <a href="soru-sayfasi.html?category=Din Kültürü&difficulty=orta2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/görsel1.jpg" alt="Din Kültürü Quiz 5">
+                    <div class="info">Quiz 5 (Orta2)</div>
+                    </div>
+                </a>
+                <!-- Quiz 6 -->
+                <a href="soru-sayfasi.html?category=Din Kültürü&difficulty=zor2" class="quiz-link">
+                    <div class="quiz">
+                    <img src="Görseller/görsel1.jpg" alt="Din Kültürü Quiz 6">
+                    <div class="info">Quiz 6 (Zor2)</div>
+                    </div>
+                </a>
+            </div>
+            <button class="more" onclick="showMoreQuizzes('din_kulturu')">Daha Fazla Gör</button>
+        </div>
+
+    </div>
+
+    <footer>
+        InterQuiz © 2024
+    </footer>
+
+    <script>
+        function searchQuizzes() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const categories = document.getElementById('categories').children;
+
+            for (let i = 0; i < categories.length; i++) {
+                const category = categories[i];
+                const quizzes = category.getElementsByClassName('quiz-link');
+                let found = false;
+
+                for (let j = 0; j < quizzes.length; j++) {
+                    const quiz = quizzes[j];
+                    const quizText = quiz.textContent.toLowerCase();
+
+                    if (quizText.includes(searchInput)) {
+                        quiz.style.display = 'block';
+                        found = true;
+                    } else {
+                        quiz.style.display = 'none';
+                    }
+                }
+
+                if (found) {
+                    category.style.display = 'block';
+                } else {
+                    category.style.display = 'none';
+                }
+            }
+        }
+
+        function showMoreQuizzes(categoryId) {
+            const hiddenQuizzes = document.querySelectorAll(`#${categoryId} .hidden-quiz`);
+            hiddenQuizzes.forEach(hiddenQuiz => {
+                hiddenQuiz.style.display = 'block';
+            });
+
+            const moreButton = document.querySelector(`#${categoryId} .more`);
+            moreButton.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
